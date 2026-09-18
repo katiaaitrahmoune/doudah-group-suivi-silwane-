@@ -1,0 +1,15 @@
+{
+  "name": "suivi-silwane",
+  "version": "1.0.0",
+  "description": "Outil de suivi des demandes de support ERP Silwane — SARL BPI/ENH DOUDAH",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "express": "^4.19.2",
+    "multer": "^2.0.1",
+    "pg": "^8.12.0"
+  }
+}

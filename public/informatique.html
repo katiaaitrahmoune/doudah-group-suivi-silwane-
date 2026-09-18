@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Suivi &amp; support — ERP Silwane · SARL BPI/ENH DOUDAH</title>
+<link rel="icon" href="/assets/doudah-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1B2430;
+    --ink-soft:#4A5568;
+    --bg:#F4F7F5;
+    --panel:#FFFFFF;
+    --line:#DCE6E0;
+    --line-soft:#EAF0EC;
+
+    --brand-green:#146C3A;
+    --brand-green-dark:#0B3F22;
+    --brand-gold:#F0C419;
+
+    --accent:#146C3A;
+    --accent-soft:#E4F2E9;
+    --accent-hover:#0F5A30;
+    --danger:#B24444;
+    --ok:#2F7D46;
+
+    --g-faible-bg:#E7EEF4; --g-faible-fg:#3D5875;
+    --g-moyenne-bg:#FBF0D2; --g-moyenne-fg:#8A6A12;
+    --g-critique-bg:#F5E1DF; --g-critique-fg:#9B3A32;
+
+    --s-ouvert-bg:#E9EDF1; --s-ouvert-fg:#4C5A6B;
+    --s-encours-bg:#FBF0D2; --s-encours-fg:#8A6A12;
+    --s-sav-bg:#EBE7F2; --s-sav-fg:#5C4E80;
+    --s-resolu-bg:#E4F2E9; --s-resolu-fg:#146C3A;
+    --s-cloture-bg:#EBEEF1; --s-cloture-fg:#6B7684;
+
+    --radius:6px;
+    --font-ui:'IBM Plex Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --font-mono:'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--font-ui);
+    font-size:15px;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;}
+
+  header.top{
+    background:linear-gradient(180deg, var(--brand-green-dark) 0%, #0E4C29 100%);
+    border-bottom:4px solid var(--brand-gold);
+  }
+  .top-inner{
+    max-width:1180px; margin:0 auto;
+    padding:18px 32px 16px 32px;
+    display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:10px;
+  }
+  .brand-row{display:flex; align-items:center; gap:14px;}
+  .logo-badge{
+    height:50px; width:50px; min-width:50px;
+    border-radius:50%;
+    background:#fff;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 1px 3px rgba(0,0,0,0.25);
+  }
+  .logo-badge img{height:42px; width:42px; display:block;}
+  .brand-text .org{font-size:13.5px; font-weight:700; color:#fff; letter-spacing:0.02em; text-transform:uppercase;}
+  .brand-text .dept{font-size:12.5px; color:#BFE3CE;}
+  h1.tool-title{font-size:23px; font-weight:700; letter-spacing:-0.01em; margin:6px 0 0 0; color:#fff;}
+  .logout-link{
+    font-size:12.5px; color:#D7EDDF; text-decoration:none; border:1px solid rgba(255,255,255,0.35);
+    border-radius:5px; padding:7px 12px; white-space:nowrap;
+  }
+  .logout-link:hover{background:rgba(255,255,255,0.08);}
+
+  main{max-width:1180px; margin:0 auto; padding:28px 32px 40px 32px;}
+
+  .si-toolbar{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:18px;
+    flex-wrap:wrap;
+  }
+  .si-toolbar input[type=text]{max-width:240px;}
+  .si-toolbar select{width:auto; max-width:190px;}
+  .si-toolbar .spacer{flex:1;}
+  input[type=text], select{
+    font-family:var(--font-ui);
+    font-size:14px;
+    color:var(--ink);
+    background:#FCFDFC;
+    border:1px solid var(--line);
+    border-radius:5px;
+    padding:9px 11px;
+  }
+  input:focus, select:focus{outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft);}
+
+  .btn{
+    appearance:none; border:none; border-radius:5px; font-family:var(--font-ui);
+    font-size:14px; font-weight:600; padding:10px 16px; cursor:pointer; transition:background .15s ease;
+  }
+  .btn-primary{background:var(--accent); color:#fff;}
+  .btn-primary:hover{background:var(--accent-hover);}
+  .btn-ghost{background:none; border:1px solid var(--line); color:var(--ink);}
+  .btn-ghost:hover{border-color:var(--ink-soft);}
+
+  table.registry{
+    width:100%;
+    border-collapse:collapse;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    overflow:hidden;
+  }
+  table.registry th{
+    text-align:left; font-size:12px; font-weight:600; color:var(--ink-soft);
+    padding:11px 14px; border-bottom:1px solid var(--line); background:#FAFBFC;
+  }
+  table.registry td{
+    padding:12px 14px; border-bottom:1px solid var(--line-soft); font-size:13.5px; vertical-align:middle;
+  }
+  table.registry tbody tr{cursor:pointer;}
+  table.registry tbody tr:hover{background:#FAFBFC;}
+  table.registry tbody tr:last-child td{border-bottom:none;}
+  .ticket-id{font-family:var(--font-mono); font-size:13px; color:var(--ink-soft);}
+
+  .badge{display:inline-block; font-size:12px; font-weight:600; padding:3px 9px; border-radius:100px;}
+
+  .empty-state, .loading-state{
+    background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+    padding:52px 24px; text-align:center; color:var(--ink-soft); font-size:14px;
+  }
+  .empty-state strong{display:block; color:var(--ink); font-size:15.5px; margin-bottom:6px; font-weight:600;}
+
+  .si-footer{display:flex; justify-content:space-between; align-items:center; margin-top:16px;}
+  .si-footer .muted{font-size:12.5px; color:var(--ink-soft);}
+
+  .modal-backdrop{
+    display:none; position:fixed; inset:0; background:rgba(11,63,34,0.45);
+    align-items:flex-start; justify-content:center; padding:48px 20px; overflow-y:auto; z-index:50;
+  }
+  .modal-backdrop.show{display:flex;}
+  .modal{
+    background:var(--panel); border-radius:8px; max-width:640px; width:100%; padding:0;
+    box-shadow:0 20px 60px rgba(11,20,15,0.3);
+  }
+  .modal-head{
+    padding:22px 26px; border-bottom:1px solid var(--line);
+    display:flex; justify-content:space-between; align-items:flex-start;
+  }
+  .modal-head .ticket-no{font-family:var(--font-mono); font-size:19px; font-weight:600; color:var(--brand-green-dark);}
+  .modal-head .meta{font-size:12.5px; color:var(--ink-soft); margin-top:4px;}
+  .modal-close{background:none; border:none; font-size:20px; color:var(--ink-soft); cursor:pointer; line-height:1; padding:4px;}
+  .modal-body{padding:22px 26px; max-height:60vh; overflow-y:auto;}
+  .detail-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px 20px; margin-bottom:22px;}
+  .detail-grid .full{grid-column:1 / -1;}
+  .detail-item .k{font-size:11.5px; color:var(--ink-soft); font-weight:600; margin-bottom:3px;}
+  .detail-item .v{font-size:14px;}
+  .captures-list{display:flex; flex-wrap:wrap; gap:8px;}
+  .capture-chip{
+    display:inline-flex; align-items:center; gap:6px; font-size:12.5px;
+    border:1px solid var(--line); border-radius:5px; padding:6px 10px; text-decoration:none; color:var(--brand-green-dark);
+    background:var(--accent-soft);
+  }
+  .capture-chip:hover{border-color:var(--accent);}
+  .section-divider{border-top:1px solid var(--line); margin:22px 0 18px 0; padding-top:18px;}
+  .section-title{font-size:13px; font-weight:700; margin-bottom:16px; color:var(--ink);}
+  .field{margin-bottom:20px;}
+  .field:last-child{margin-bottom:0;}
+  .field label{display:block; font-size:13.5px; font-weight:600; margin-bottom:6px;}
+  .field-row{display:flex; gap:14px;}
+  .field-row .field{flex:1;}
+  input[type=date], textarea{
+    width:100%; font-family:var(--font-ui); font-size:14.5px; color:var(--ink);
+    background:#FCFDFC; border:1px solid var(--line); border-radius:5px; padding:9px 11px;
+  }
+  textarea{resize:vertical; min-height:80px;}
+  .sav-row{display:flex; gap:10px; align-items:flex-end;}
+  .sav-row .field{flex:1;}
+  .modal-foot{padding:18px 26px; border-top:1px solid var(--line); display:flex; justify-content:flex-end; gap:10px;}
+
+  @media (max-width: 720px){
+    .top-inner, main{padding-left:18px; padding-right:18px;}
+    .detail-grid{grid-template-columns:1fr;}
+    table.registry{display:block; overflow-x:auto;}
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-inner">
+    <div class="brand-row">
+      <div class="logo-badge"><img src="/assets/doudah-logo.png" alt="SARL BPI/ENH DOUDAH"></div>
+      <div class="brand-text">
+        <div class="org">SARL BPI/ENH DOUDAH</div>
+        <div class="dept">Service Informatique — ERP Silwane</div>
+        <h1 class="tool-title">Suivi &amp; support</h1>
+      </div>
+    </div>
+    <form method="POST" action="/informatique/logout"><button type="submit" class="logout-link" style="background:none; cursor:pointer;">Se déconnecter</button></form>
+  </div>
+</header>
+
+<main>
+  <div class="si-toolbar">
+    <input type="text" id="si-search" placeholder="Rechercher (ticket, demandeur, module)…" oninput="renderRegistry()">
+    <select id="si-filter-gravite" onchange="renderRegistry()">
+      <option value="">Toutes gravités</option>
+      <option>Faible</option>
+      <option>Moyenne</option>
+      <option>Critique</option>
+    </select>
+    <select id="si-filter-statut" onchange="renderRegistry()">
+      <option value="">Tous statuts</option>
+      <option>Ouvert</option>
+      <option>En cours</option>
+      <option>Transmis SAV</option>
+      <option>Résolu</option>
+      <option>Clôturé</option>
+    </select>
+    <div class="spacer"></div>
+    <button class="btn btn-ghost" onclick="loadRegistry()">Actualiser</button>
+  </div>
+
+  <div id="si-loading" class="loading-state">Chargement du registre…</div>
+  <div id="si-empty" class="empty-state" style="display:none;">
+    <strong>Le registre est vide</strong>
+    Les déclarations soumises depuis l'espace utilisateur apparaîtront ici.
+  </div>
+  <table class="registry" id="si-table" style="display:none;">
+    <thead>
+      <tr>
+        <th>N° ticket</th>
+        <th>Date</th>
+        <th>Demandeur</th>
+        <th>Service</th>
+        <th>Module</th>
+        <th>Gravité</th>
+        <th>Statut</th>
+        <th>Pris en charge par</th>
+      </tr>
+    </thead>
+    <tbody id="si-tbody"></tbody>
+  </table>
+
+  <div class="si-footer">
+    <span class="muted" id="si-count"></span>
+  </div>
+</main>
+
+<!-- ============ TICKET DETAIL / EDIT MODAL ============ -->
+<div class="modal-backdrop" id="modal-backdrop" onclick="if(event.target===this) closeModal()">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <div class="ticket-no" id="m-ticket-no"></div>
+        <div class="meta" id="m-meta"></div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="detail-grid">
+        <div class="detail-item"><div class="k">Demandeur</div><div class="v" id="m-demandeur"></div></div>
+        <div class="detail-item"><div class="k">Service / département</div><div class="v" id="m-service"></div></div>
+        <div class="detail-item"><div class="k">Module Silwane</div><div class="v" id="m-module"></div></div>
+        <div class="detail-item"><div class="k">Gravité</div><div class="v" id="m-gravite"></div></div>
+        <div class="detail-item full"><div class="k">Description du problème</div><div class="v" id="m-description"></div></div>
+        <div class="detail-item full"><div class="k">Message d'erreur exact</div><div class="v" id="m-erreur"></div></div>
+        <div class="detail-item full"><div class="k">Actions déjà tentées</div><div class="v" id="m-actions"></div></div>
+        <div class="detail-item full" id="m-captures-wrap" style="display:none;">
+          <div class="k">Captures jointes</div>
+          <div class="captures-list" id="m-captures"></div>
+        </div>
+      </div>
+
+      <div class="section-divider">
+        <div class="section-title">Suivi &amp; traitement — service informatique</div>
+
+        <div class="field">
+          <label for="m-pris-en-charge">Pris en charge par</label>
+          <input type="text" id="m-pris-en-charge">
+        </div>
+
+        <div class="field sav-row">
+          <div class="field">
+            <label for="m-escalade">Escalade vers SAV Silwane</label>
+            <select id="m-escalade" onchange="toggleSavField()">
+              <option value="Non">Non</option>
+              <option value="Oui">Oui</option>
+            </select>
+          </div>
+          <div class="field" id="m-sav-no-wrap" style="display:none;">
+            <label for="m-sav-no">N° ticket SAV</label>
+            <input type="text" id="m-sav-no">
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="m-statut">Statut</label>
+            <select id="m-statut">
+              <option>Ouvert</option>
+              <option>En cours</option>
+              <option>Transmis SAV</option>
+              <option>Résolu</option>
+              <option>Clôturé</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="m-date-resolution">Date de résolution</label>
+            <input type="date" id="m-date-resolution">
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="m-resolution">Résolution / commentaires</label>
+          <textarea id="m-resolution"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal()">Annuler</button>
+      <button class="btn btn-primary" id="modal-save-btn" onclick="saveTicketUpdate()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let currentTickets = [];
+let editingTicketId = null;
+
+async function loadRegistry(){
+  document.getElementById('si-loading').style.display = 'block';
+  document.getElementById('si-empty').style.display = 'none';
+  document.getElementById('si-table').style.display = 'none';
+
+  const res = await fetch('/api/tickets');
+  if(res.status === 401){ location.href = '/informatique/login'; return; }
+  currentTickets = await res.json();
+  document.getElementById('si-loading').style.display = 'none';
+  renderRegistry();
+}
+
+function graviteBadge(g){
+  const map = {
+    'Faible':   ['g-faible-bg','g-faible-fg'],
+    'Moyenne':  ['g-moyenne-bg','g-moyenne-fg'],
+    'Critique': ['g-critique-bg','g-critique-fg']
+  };
+  const [bg, fg] = map[g] || map['Faible'];
+  return `<span class="badge" style="background:var(--${bg});color:var(--${fg})">${g}</span>`;
+}
+
+function statutBadge(s){
+  const map = {
+    'Ouvert':       ['s-ouvert-bg','s-ouvert-fg'],
+    'En cours':     ['s-encours-bg','s-encours-fg'],
+    'Transmis SAV': ['s-sav-bg','s-sav-fg'],
+    'Résolu':       ['s-resolu-bg','s-resolu-fg'],
+    'Clôturé':      ['s-cloture-bg','s-cloture-fg']
+  };
+  const [bg, fg] = map[s] || map['Ouvert'];
+  return `<span class="badge" style="background:var(--${bg});color:var(--${fg})">${s}</span>`;
+}
+
+function renderRegistry(){
+  const search = document.getElementById('si-search').value.trim().toLowerCase();
+  const fGravite = document.getElementById('si-filter-gravite').value;
+  const fStatut = document.getElementById('si-filter-statut').value;
+
+  let rows = currentTickets.filter(t => {
+    if(fGravite && t.gravite !== fGravite) return false;
+    if(fStatut && t.statut !== fStatut) return false;
+    if(search){
+      const hay = `${t.numero} ${t.demandeur} ${t.module}`.toLowerCase();
+      if(!hay.includes(search)) return false;
+    }
+    return true;
+  });
+
+  rows.sort((a,b) => (b.date_creation || '').localeCompare(a.date_creation || ''));
+
+  const tbody = document.getElementById('si-tbody');
+  const table = document.getElementById('si-table');
+  const empty = document.getElementById('si-empty');
+
+  if(currentTickets.length === 0){
+    table.style.display = 'none';
+    empty.style.display = 'block';
+    document.getElementById('si-count').textContent = '';
+    return;
+  }
+
+  table.style.display = 'table';
+  empty.style.display = 'none';
+
+  tbody.innerHTML = rows.map(t => `
+    <tr onclick="openModal('${t.id}')">
+      <td class="ticket-id">${t.numero}</td>
+      <td>${formatDate(t.date_creation)}</td>
+      <td>${escapeHtml(t.demandeur || '—')}</td>
+      <td>${escapeHtml(t.service || '—')}</td>
+      <td>${escapeHtml(t.module || '—')}</td>
+      <td>${graviteBadge(t.gravite)}</td>
+      <td>${statutBadge(t.statut)}</td>
+      <td>${escapeHtml(t.pris_en_charge_par || '—')}</td>
+    </tr>
+  `).join('');
+
+  document.getElementById('si-count').textContent =
+    `${rows.length} ticket${rows.length > 1 ? 's' : ''} affiché${rows.length > 1 ? 's' : ''} sur ${currentTickets.length}`;
+}
+
+function formatDate(d){
+  if(!d) return '—';
+  const parts = d.split('-');
+  if(parts.length !== 3) return d;
+  return `${parts[2]}/${parts[1]}/${parts[0]}`;
+}
+
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function openModal(id){
+  const t = currentTickets.find(x => x.id === id);
+  if(!t) return;
+  editingTicketId = id;
+
+  document.getElementById('m-ticket-no').textContent = t.numero;
+  document.getElementById('m-meta').textContent = `Déclaré le ${formatDate(t.date_creation)}`;
+  document.getElementById('m-demandeur').textContent = t.demandeur || '—';
+  document.getElementById('m-service').textContent = t.service || '—';
+  document.getElementById('m-module').textContent = t.module || '—';
+  document.getElementById('m-gravite').innerHTML = graviteBadge(t.gravite);
+  document.getElementById('m-description').textContent = t.description || '—';
+  document.getElementById('m-erreur').textContent = t.message_erreur || '—';
+  document.getElementById('m-actions').textContent = t.actions_tentees || '—';
+
+  const capturesWrap = document.getElementById('m-captures-wrap');
+  const capturesBox = document.getElementById('m-captures');
+  if(t.captures && t.captures.length){
+    capturesWrap.style.display = 'block';
+    capturesBox.innerHTML = t.captures.map(c =>
+      `<a class="capture-chip" href="/uploads/${c.filename}" target="_blank">📎 ${escapeHtml(c.originalName || c.filename)}</a>`
+    ).join('');
+  }else{
+    capturesWrap.style.display = 'none';
+    capturesBox.innerHTML = '';
+  }
+
+  document.getElementById('m-pris-en-charge').value = t.pris_en_charge_par || '';
+  document.getElementById('m-escalade').value = t.escalade_sav || 'Non';
+  document.getElementById('m-sav-no').value = t.numero_sav || '';
+  document.getElementById('m-statut').value = t.statut || 'Ouvert';
+  document.getElementById('m-date-resolution').value = t.date_resolution || '';
+  document.getElementById('m-resolution').value = t.resolution || '';
+  toggleSavField();
+
+  document.getElementById('modal-backdrop').classList.add('show');
+}
+
+function toggleSavField(){
+  const on = document.getElementById('m-escalade').value === 'Oui';
+  document.getElementById('m-sav-no-wrap').style.display = on ? 'block' : 'none';
+}
+
+function closeModal(){
+  document.getElementById('modal-backdrop').classList.remove('show');
+  editingTicketId = null;
+}
+
+async function saveTicketUpdate(){
+  if(!editingTicketId) return;
+  const btn = document.getElementById('modal-save-btn');
+  btn.disabled = true;
+  btn.textContent = 'Enregistrement…';
+
+  const patch = {
+    pris_en_charge_par: document.getElementById('m-pris-en-charge').value,
+    escalade_sav: document.getElementById('m-escalade').value,
+    numero_sav: document.getElementById('m-sav-no').value,
+    statut: document.getElementById('m-statut').value,
+    date_resolution: document.getElementById('m-date-resolution').value,
+    resolution: document.getElementById('m-resolution').value
+  };
+
+  const res = await fetch(`/api/tickets/${editingTicketId}`, {
+    method: 'PATCH',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(patch)
+  });
+  if(res.status === 401){ location.href = '/informatique/login'; return; }
+  const updated = await res.json();
+
+  const idx = currentTickets.findIndex(t => t.id === editingTicketId);
+  if(idx !== -1 && updated) currentTickets[idx] = Object.assign({}, currentTickets[idx], updated);
+
+  btn.disabled = false;
+  btn.textContent = 'Enregistrer';
+  closeModal();
+  renderRegistry();
+}
+
+loadRegistry();
+</script>
+</body>
+</html>

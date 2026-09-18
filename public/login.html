@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Espace informatique — Suivi Silwane · SARL BPI/ENH DOUDAH</title>
+<link rel="icon" href="/assets/doudah-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1B2430;
+    --ink-soft:#4A5568;
+    --bg:#F4F7F5;
+    --panel:#FFFFFF;
+    --line:#DCE6E0;
+    --brand-green-dark:#0B3F22;
+    --brand-gold:#F0C419;
+    --accent:#146C3A;
+    --accent-hover:#0F5A30;
+    --accent-soft:#E4F2E9;
+    --danger:#B24444;
+    --font-ui:'IBM Plex Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0; height:100%;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--font-ui);
+    font-size:15px;
+    line-height:1.5;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-height:100vh;
+  }
+  .card{
+    width:100%;
+    max-width:380px;
+    margin:24px;
+  }
+  .brand-row{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+    gap:10px;
+    margin-bottom:24px;
+  }
+  .logo-badge{
+    height:64px; width:64px;
+    border-radius:50%;
+    background:#fff;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 1px 4px rgba(0,0,0,0.18);
+    border:3px solid var(--brand-gold);
+  }
+  .logo-badge img{height:52px; width:52px;}
+  .brand-row .org{font-size:14px; font-weight:700; color:var(--brand-green-dark); letter-spacing:0.02em; text-transform:uppercase;}
+  .brand-row .dept{font-size:13px; color:var(--ink-soft);}
+  .panel{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:28px;
+  }
+  h1{font-size:18px; margin:0 0 6px 0;}
+  .sub{font-size:13.5px; color:var(--ink-soft); margin:0 0 22px 0;}
+  .field{margin-bottom:18px;}
+  .field label{display:block; font-size:13.5px; font-weight:600; margin-bottom:6px;}
+  input[type=password]{
+    width:100%;
+    font-family:var(--font-ui);
+    font-size:14.5px;
+    color:var(--ink);
+    background:#FCFDFC;
+    border:1px solid var(--line);
+    border-radius:5px;
+    padding:10px 11px;
+  }
+  input:focus{outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft);}
+  .btn-primary{
+    width:100%;
+    appearance:none;
+    border:none;
+    border-radius:5px;
+    background:var(--accent);
+    color:#fff;
+    font-family:var(--font-ui);
+    font-size:14.5px;
+    font-weight:600;
+    padding:11px 18px;
+    cursor:pointer;
+  }
+  .btn-primary:hover{background:var(--accent-hover);}
+  .error-msg{
+    color:var(--danger); font-size:13px; margin:0 0 16px 0;
+    background:#FBEDEC; border:1px solid #E7B9B3; border-radius:5px; padding:9px 11px;
+  }
+  .back-link{display:block; text-align:center; margin-top:18px; font-size:13px;}
+  .back-link a{color:var(--ink-soft); text-decoration:none;}
+  .back-link a:hover{color:var(--ink);}
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="brand-row">
+      <div class="logo-badge"><img src="/assets/doudah-logo.png" alt="SARL BPI/ENH DOUDAH"></div>
+      <div class="org">SARL BPI/ENH DOUDAH</div>
+      <div class="dept">Service Informatique — ERP Silwane</div>
+    </div>
+    <div class="panel">
+      <h1>Espace informatique</h1>
+      <p class="sub">Saisissez le code d'accès du service informatique pour ouvrir le registre des tickets.</p>
+      <div id="error-box" class="error-msg" style="display:none;">Code d'accès incorrect. Merci de réessayer.</div>
+      <form method="POST" action="/informatique/login">
+        <div class="field">
+          <label for="passcode">Code d'accès</label>
+          <input type="password" id="passcode" name="passcode" autofocus required>
+        </div>
+        <button type="submit" class="btn-primary">Se connecter</button>
+      </form>
+    </div>
+    <div class="back-link"><a href="/">← Retour à l'espace de déclaration</a></div>
+  </div>
+  <script>
+    if (new URLSearchParams(location.search).get('erreur') === '1') {
+      document.getElementById('error-box').style.display = 'block';
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Déclarer une panne — ERP Silwane · SARL BPI/ENH DOUDAH</title>
+<link rel="icon" href="/assets/doudah-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1B2430;
+    --ink-soft:#4A5568;
+    --bg:#F4F7F5;
+    --panel:#FFFFFF;
+    --line:#DCE6E0;
+    --line-soft:#EAF0EC;
+
+    --brand-green:#146C3A;
+    --brand-green-bright:#1AAC4F;
+    --brand-green-dark:#0B3F22;
+    --brand-gold:#F0C419;
+
+    --accent:#146C3A;
+    --accent-soft:#E4F2E9;
+    --accent-hover:#0F5A30;
+    --danger:#B24444;
+    --ok:#2F7D46;
+
+    --g-faible-bg:#E7EEF4; --g-faible-fg:#3D5875;
+    --g-moyenne-bg:#FBF0D2; --g-moyenne-fg:#8A6A12;
+    --g-critique-bg:#F5E1DF; --g-critique-fg:#9B3A32;
+
+    --s-ouvert-bg:#E9EDF1; --s-ouvert-fg:#4C5A6B;
+    --s-encours-bg:#FBF0D2; --s-encours-fg:#8A6A12;
+    --s-sav-bg:#EBE7F2; --s-sav-fg:#5C4E80;
+    --s-resolu-bg:#E4F2E9; --s-resolu-fg:#146C3A;
+    --s-cloture-bg:#EBEEF1; --s-cloture-fg:#6B7684;
+
+    --radius:6px;
+    --font-ui:'IBM Plex Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --font-mono:'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--font-ui);
+    font-size:15px;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;}
+
+  header.top{
+    background:linear-gradient(180deg, var(--brand-green-dark) 0%, #0E4C29 100%);
+    border-bottom:4px solid var(--brand-gold);
+  }
+  .top-inner{
+    max-width:720px; margin:0 auto;
+    padding:18px 32px 16px 32px;
+  }
+  .brand-row{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    margin-bottom:16px;
+  }
+  .brand-row .logo-badge{
+    height:50px; width:50px; min-width:50px;
+    border-radius:50%;
+    background:#fff;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 1px 3px rgba(0,0,0,0.25);
+  }
+  .brand-row img{height:42px; width:42px; display:block;}
+  .brand-text .org{font-size:13.5px; font-weight:700; color:#fff; letter-spacing:0.02em; text-transform:uppercase;}
+  .brand-text .dept{font-size:12.5px; color:#BFE3CE;}
+  h1.tool-title{
+    font-size:23px;
+    font-weight:700;
+    letter-spacing:-0.01em;
+    margin:0 0 14px 0;
+    color:#fff;
+  }
+  nav.tabs{display:flex; gap:4px;}
+  nav.tabs button{
+    appearance:none; background:none; border:none;
+    font-family:var(--font-ui); font-size:14px; font-weight:500;
+    color:#BFE3CE; padding:9px 2px; margin-right:22px; cursor:pointer;
+    border-bottom:2px solid transparent; transition:color .15s ease, border-color .15s ease;
+  }
+  nav.tabs button:hover{color:#fff;}
+  nav.tabs button.active{color:#fff; border-bottom-color:var(--brand-gold);}
+
+  .view{display:none;}
+  .view.active{display:block;}
+
+  .detail-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px 20px;}
+  .detail-grid .full{grid-column:1 / -1;}
+  .detail-item .k{font-size:11.5px; color:var(--ink-soft); font-weight:600; margin-bottom:3px;}
+  .detail-item .v{font-size:14px;}
+  .detail-item .v.mono{font-family:var(--font-mono); font-size:13px;}
+  .badge{display:inline-block; font-size:12px; font-weight:600; padding:3px 9px; border-radius:100px;}
+
+  main{max-width:720px; margin:0 auto; padding:32px;}
+
+  .form-intro{
+    color:var(--ink-soft);
+    font-size:14.5px;
+    margin-bottom:24px;
+    max-width:60ch;
+  }
+  .server-warning{
+    display:none;
+    align-items:center;
+    gap:10px;
+    background:#FBEDEC;
+    border:1px solid #E7B9B3;
+    color:#8A342C;
+    font-size:13px;
+    padding:10px 14px;
+    border-radius:var(--radius);
+    margin-bottom:22px;
+  }
+  .server-warning.show{display:flex;}
+
+  .panel{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:28px;
+  }
+  .field{margin-bottom:20px;}
+  .field:last-child{margin-bottom:0;}
+  .field label{
+    display:block;
+    font-size:13.5px;
+    font-weight:600;
+    margin-bottom:6px;
+  }
+  .field .hint{
+    font-size:12.5px;
+    color:var(--ink-soft);
+    margin-top:5px;
+  }
+  .field-row{display:flex; gap:14px;}
+  .field-row .field{flex:1;}
+  input[type=text], input[type=date], input[type=file], select, textarea{
+    width:100%;
+    font-family:var(--font-ui);
+    font-size:14.5px;
+    color:var(--ink);
+    background:#FCFDFC;
+    border:1px solid var(--line);
+    border-radius:5px;
+    padding:9px 11px;
+  }
+  textarea{resize:vertical; min-height:80px;}
+  input:focus, select:focus, textarea:focus{
+    outline:none;
+    border-color:var(--accent);
+    box-shadow:0 0 0 3px var(--accent-soft);
+  }
+  fieldset{border:none; padding:0; margin:0;}
+  .severity-options{display:flex; gap:8px;}
+  .severity-options label{
+    flex:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    border:1px solid var(--line);
+    border-radius:5px;
+    padding:9px 6px;
+    font-size:13.5px;
+    font-weight:500;
+    cursor:pointer;
+    color:var(--ink-soft);
+  }
+  .severity-options input{width:auto; margin:0;}
+  .severity-options label.sel-faible.checked{background:var(--g-faible-bg); border-color:#C4D3E0; color:var(--g-faible-fg);}
+  .severity-options label.sel-moyenne.checked{background:var(--g-moyenne-bg); border-color:#E9D28E; color:var(--g-moyenne-fg);}
+  .severity-options label.sel-critique.checked{background:var(--g-critique-bg); border-color:#E7B9B3; color:var(--g-critique-fg);}
+
+  .btn{
+    appearance:none;
+    border:none;
+    border-radius:5px;
+    font-family:var(--font-ui);
+    font-size:14px;
+    font-weight:600;
+    padding:10px 18px;
+    cursor:pointer;
+    transition:background .15s ease;
+  }
+  .btn-primary{background:var(--accent); color:#fff;}
+  .btn-primary:hover{background:var(--accent-hover);}
+  .btn-primary:disabled{background:#A9B7BE; cursor:not-allowed;}
+  .btn-ghost{background:none; border:1px solid var(--line); color:var(--ink);}
+  .btn-ghost:hover{border-color:var(--ink-soft);}
+  .form-actions{margin-top:26px; display:flex; align-items:center; gap:14px;}
+  .form-error{color:var(--danger); font-size:13.5px; margin-top:14px; display:none;}
+
+  .confirm{
+    display:none;
+    text-align:left;
+    padding:6px 2px;
+  }
+  .confirm .ticket-no{
+    font-family:var(--font-mono);
+    font-size:22px;
+    font-weight:600;
+    color:var(--brand-green-dark);
+    display:inline-block;
+    margin:10px 0 4px 0;
+    letter-spacing:0.01em;
+  }
+  .confirm p{color:var(--ink-soft); font-size:14px; margin:4px 0;}
+
+  footer.page-footer{
+    max-width:720px; margin:24px auto 0 auto; padding:20px 32px 40px 32px;
+    border-top:1px solid var(--line-soft);
+    color:var(--ink-soft); font-size:12px;
+    display:flex; justify-content:space-between; gap:20px; flex-wrap:wrap;
+  }
+  footer.page-footer .hq{line-height:1.6;}
+  footer.page-footer strong{color:var(--ink);}
+
+  @media (max-width: 620px){
+    .top-inner, main, footer.page-footer{padding-left:18px; padding-right:18px;}
+    .field-row{flex-direction:column;}
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-inner">
+    <div class="brand-row">
+      <div class="logo-badge"><img src="/assets/doudah-logo.png" alt="SARL BPI/ENH DOUDAH"></div>
+      <div class="brand-text">
+        <div class="org">SARL BPI/ENH DOUDAH</div>
+        <div class="dept">Service Informatique — ERP Silwane</div>
+      </div>
+    </div>
+    <h1 class="tool-title" id="page-title">Déclarer une panne</h1>
+    <nav class="tabs">
+      <button id="tab-declarer" class="active" onclick="switchView('declarer')">Déclarer une panne</button>
+      <button id="tab-verifier" onclick="switchView('verifier')">Vérifier le statut</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="server-warning" id="server-warning">
+    <span>Le serveur de suivi est actuellement inaccessible. Merci de réessayer dans quelques instants ou de contacter directement le service informatique.</span>
+  </div>
+
+  <!-- ============ DÉCLARER UNE PANNE ============ -->
+  <section id="view-declarer" class="view active">
+  <p class="form-intro">Décrivez la panne rencontrée sur l'ERP Silwane. Votre demande sera transmise au service informatique, qui vous recontactera avec un numéro de suivi.</p>
+
+  <div class="panel">
+    <form id="incident-form" novalidate>
+      <div class="field">
+        <label for="f-nom">Nom &amp; prénom du demandeur</label>
+        <input type="text" id="f-nom" name="demandeur" required>
+      </div>
+
+      <div class="field">
+        <label for="f-email">Email (pour être notifié de la résolution)</label>
+        <input type="text" id="f-email" name="email" placeholder="prenom.nom@doudah.com">
+        <div class="hint">Optionnel — un email vous sera envoyé dès que votre déclaration sera marquée « Résolu ». Sans email, vérifiez le statut avec votre numéro de ticket via l'onglet « Vérifier le statut ».</div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="f-service">Service / département</label>
+          <select id="f-service" name="service" required>
+            <option value="">Sélectionner…</option>
+            <option>Ventes</option>
+            <option>Achats</option>
+            <option>Stocks</option>
+            <option>Comptabilité</option>
+            <option value="Autre">Autre</option>
+          </select>
+        </div>
+        <div class="field" id="f-service-autre-wrap" style="display:none;">
+          <label for="f-service-autre">Préciser le service</label>
+          <input type="text" id="f-service-autre" name="service_autre">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="f-module">Module Silwane concerné</label>
+        <input type="text" id="f-module" name="module" placeholder="ex. Facturation, Stocks, Comptabilité…" required>
+      </div>
+
+      <div class="field">
+        <label>Gravité</label>
+        <fieldset class="severity-options" id="severity-group">
+          <label class="sel-faible" data-val="Faible"><input type="radio" name="gravite" value="Faible"> Faible</label>
+          <label class="sel-moyenne" data-val="Moyenne"><input type="radio" name="gravite" value="Moyenne"> Moyenne</label>
+          <label class="sel-critique" data-val="Critique"><input type="radio" name="gravite" value="Critique"> Critique</label>
+        </fieldset>
+      </div>
+
+      <div class="field">
+        <label for="f-desc">Description du problème</label>
+        <textarea id="f-desc" name="description" placeholder="Que se passe-t-il ? Quelle action déclenche l'erreur ?" required></textarea>
+      </div>
+
+      <div class="field">
+        <label for="f-err">Message d'erreur exact</label>
+        <textarea id="f-err" name="message_erreur" placeholder="Copiez le message affiché à l'écran, si disponible"></textarea>
+      </div>
+
+      <div class="field">
+        <label for="f-captures">Capture(s) d'écran</label>
+        <input type="file" id="f-captures" name="captures" accept="image/*" multiple>
+        <div class="hint">Optionnel — jusqu'à 6 images, 8 Mo maximum chacune.</div>
+      </div>
+
+      <div class="field">
+        <label for="f-actions">Actions déjà tentées</label>
+        <textarea id="f-actions" name="actions_tentees" placeholder="Redémarrage, reconnexion, etc."></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary" id="submit-btn">Envoyer la déclaration</button>
+      </div>
+      <div class="form-error" id="form-error"></div>
+    </form>
+
+    <div class="confirm" id="confirm-block">
+      <p>Votre déclaration a bien été enregistrée.</p>
+      <div class="ticket-no" id="confirm-ticket-no"></div>
+      <p id="confirm-email-note">Conservez ce numéro pour le suivi de votre demande.</p>
+      <div class="form-actions">
+        <button class="btn btn-ghost" onclick="resetForm()">Déclarer une autre panne</button>
+      </div>
+    </div>
+  </div>
+  </section>
+
+  <!-- ============ VÉRIFIER LE STATUT ============ -->
+  <section id="view-verifier" class="view">
+    <p class="form-intro">Saisissez le numéro de ticket reçu lors de votre déclaration (ex. INC-2026-0001) pour connaître son état de traitement.</p>
+
+    <div class="panel">
+      <form id="lookup-form" novalidate>
+        <div class="field">
+          <label for="lk-numero">Numéro de ticket</label>
+          <input type="text" id="lk-numero" placeholder="INC-2026-0001" required autocomplete="off">
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" id="lookup-btn">Vérifier</button>
+        </div>
+        <div class="form-error" id="lookup-error"></div>
+      </form>
+
+      <div id="lookup-result" style="display:none; margin-top:24px;">
+        <div class="detail-grid">
+          <div class="detail-item"><div class="k">Numéro</div><div class="v mono" id="lk-r-numero"></div></div>
+          <div class="detail-item"><div class="k">Déclaré le</div><div class="v" id="lk-r-date"></div></div>
+          <div class="detail-item"><div class="k">Module</div><div class="v" id="lk-r-module"></div></div>
+          <div class="detail-item"><div class="k">Gravité</div><div class="v" id="lk-r-gravite"></div></div>
+          <div class="detail-item full"><div class="k">Statut</div><div class="v" id="lk-r-statut"></div></div>
+          <div class="detail-item full" id="lk-r-resolution-wrap" style="display:none;">
+            <div class="k">Résolution</div><div class="v" id="lk-r-resolution"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="page-footer">
+  <div class="hq"><strong>SARL BPI/ENH DOUDAH</strong><br>392 logts, Centre commercial (ex Souk El Fellah), Boumerdès<br>Tél : +213 (0) 24 79 74 88/80/84</div>
+  <div class="hq">Besoin d'assistance urgente ?<br>Contactez directement le service informatique.</div>
+</footer>
+
+<script>
+function switchView(view){
+  document.getElementById('view-declarer').classList.toggle('active', view === 'declarer');
+  document.getElementById('view-verifier').classList.toggle('active', view === 'verifier');
+  document.getElementById('tab-declarer').classList.toggle('active', view === 'declarer');
+  document.getElementById('tab-verifier').classList.toggle('active', view === 'verifier');
+  document.getElementById('page-title').textContent = view === 'declarer' ? 'Déclarer une panne' : 'Vérifier le statut';
+}
+
+document.querySelectorAll('#severity-group input').forEach(input => {
+  input.addEventListener('change', () => {
+    document.querySelectorAll('#severity-group label').forEach(l => l.classList.remove('checked'));
+    input.closest('label').classList.add('checked');
+  });
+});
+
+document.getElementById('f-service').addEventListener('change', (e) => {
+  document.getElementById('f-service-autre-wrap').style.display = e.target.value === 'Autre' ? 'block' : 'none';
+});
+
+document.getElementById('incident-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const form = e.target;
+  const errBox = document.getElementById('form-error');
+  const warnBox = document.getElementById('server-warning');
+  errBox.style.display = 'none';
+  warnBox.classList.remove('show');
+
+  if(!form.checkValidity()){
+    form.reportValidity();
+    return;
+  }
+  const gravite = form.querySelector('input[name=gravite]:checked');
+  if(!gravite){
+    errBox.textContent = 'Merci de sélectionner un niveau de gravité.';
+    errBox.style.display = 'block';
+    return;
+  }
+
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Envoi en cours…';
+
+  try{
+    const fd = new FormData(form);
+    const res = await fetch('/api/tickets', { method: 'POST', body: fd });
+    if(!res.ok){
+      const body = await res.json().catch(() => ({}));
+      throw new Error(body.error || 'bad response');
+    }
+    const ticket = await res.json();
+    document.getElementById('incident-form').style.display = 'none';
+    document.getElementById('confirm-ticket-no').textContent = ticket.numero;
+    document.getElementById('confirm-email-note').textContent = ticket.email
+      ? `Un email vous sera envoyé à ${ticket.email} dès que ce ticket sera résolu. Conservez aussi ce numéro pour le suivi.`
+      : 'Conservez ce numéro : il vous permettra de vérifier le statut via l\'onglet « Vérifier le statut ».';
+    document.getElementById('confirm-block').style.display = 'block';
+  }catch(err){
+    warnBox.classList.add('show');
+    errBox.textContent = "Une erreur est survenue lors de l'envoi. Merci de réessayer.";
+    errBox.style.display = 'block';
+  }finally{
+    btn.disabled = false;
+    btn.textContent = 'Envoyer la déclaration';
+  }
+});
+
+function resetForm(){
+  const form = document.getElementById('incident-form');
+  form.reset();
+  document.querySelectorAll('#severity-group label').forEach(l => l.classList.remove('checked'));
+  document.getElementById('f-service-autre-wrap').style.display = 'none';
+  form.style.display = 'block';
+  document.getElementById('confirm-block').style.display = 'none';
+}
+
+/* ---------------- Vérifier le statut ---------------- */
+function graviteBadge(g){
+  const map = {
+    'Faible':   ['g-faible-bg','g-faible-fg'],
+    'Moyenne':  ['g-moyenne-bg','g-moyenne-fg'],
+    'Critique': ['g-critique-bg','g-critique-fg']
+  };
+  const [bg, fg] = map[g] || map['Faible'];
+  return `<span class="badge" style="background:var(--${bg});color:var(--${fg})">${g}</span>`;
+}
+function statutBadge(s){
+  const map = {
+    'Ouvert':       ['s-ouvert-bg','s-ouvert-fg'],
+    'En cours':     ['s-encours-bg','s-encours-fg'],
+    'Transmis SAV': ['s-sav-bg','s-sav-fg'],
+    'Résolu':       ['s-resolu-bg','s-resolu-fg'],
+    'Clôturé':      ['s-cloture-bg','s-cloture-fg']
+  };
+  const [bg, fg] = map[s] || map['Ouvert'];
+  return `<span class="badge" style="background:var(--${bg});color:var(--${fg})">${s}</span>`;
+}
+function formatDate(d){
+  if(!d) return '—';
+  const parts = d.split('-');
+  if(parts.length !== 3) return d;
+  return `${parts[2]}/${parts[1]}/${parts[0]}`;
+}
+
+document.getElementById('lookup-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const numero = document.getElementById('lk-numero').value.trim();
+  const errBox = document.getElementById('lookup-error');
+  const resultBox = document.getElementById('lookup-result');
+  errBox.style.display = 'none';
+  resultBox.style.display = 'none';
+  if(!numero) return;
+
+  const btn = document.getElementById('lookup-btn');
+  btn.disabled = true;
+  btn.textContent = 'Recherche…';
+
+  try{
+    const res = await fetch(`/api/tickets/lookup?numero=${encodeURIComponent(numero)}`);
+    const body = await res.json();
+    if(!res.ok){
+      errBox.textContent = body.error || 'Aucun ticket ne correspond à ce numéro.';
+      errBox.style.display = 'block';
+      return;
+    }
+    document.getElementById('lk-r-numero').textContent = body.numero;
+    document.getElementById('lk-r-date').textContent = formatDate(body.date_creation);
+    document.getElementById('lk-r-module').textContent = body.module || '—';
+    document.getElementById('lk-r-gravite').innerHTML = graviteBadge(body.gravite);
+    document.getElementById('lk-r-statut').innerHTML = statutBadge(body.statut) +
+      (body.statut === 'Résolu' && body.date_resolution ? `  <span class="hint" style="display:inline">— le ${formatDate(body.date_resolution)}</span>` : '');
+    const resWrap = document.getElementById('lk-r-resolution-wrap');
+    if(body.resolution){
+      resWrap.style.display = 'block';
+      document.getElementById('lk-r-resolution').textContent = body.resolution;
+    }else{
+      resWrap.style.display = 'none';
+    }
+    resultBox.style.display = 'block';
+  }catch(err){
+    errBox.textContent = "Une erreur est survenue lors de la vérification. Merci de réessayer.";
+    errBox.style.display = 'block';
+  }finally{
+    btn.disabled = false;
+    btn.textContent = 'Vérifier';
+  }
+});
+</script>
+</body>
+</html>
