@@ -1,15 +1,4 @@
-// server.js
-// Backend de l'outil "Suivi support — ERP Silwane" (SARL BPI/ENH DOUDAH).
-//
-// Deux espaces distincts servis par ce même serveur :
-//   - Espace client   : /                  (public, aucune authentification)
-//   - Espace SI        : /informatique       (protégé par un code d'accès)
-//
-// API JSON consommée par les deux pages :
-//   POST   /api/tickets          créer un ticket (multipart/form-data)
-//   GET    /api/tickets          lister les tickets       [réservé SI]
-//   PATCH  /api/tickets/:id      mettre à jour un ticket   [réservé SI]
-//   GET    /uploads/:file        récupérer une capture jointe [réservé SI]
+
 
 const express = require("express");
 const multer = require("multer");
@@ -18,8 +7,6 @@ const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
 
-// Petit chargeur de .env fait main (évite une dépendance supplémentaire).
-// Doit s'exécuter avant tout require() qui lit process.env (lib/db, lib/mailer...).
 (function loadEnvFile() {
   const envPath = path.join(__dirname, ".env");
   if (!fs.existsSync(envPath)) return;
@@ -51,14 +38,7 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-/* ------------------------------------------------------------------ */
-/* Authentification très simple pour l'espace « service informatique » */
-/* Un seul code d'accès partagé (défini dans .env) protège le tableau  */
-/* de bord SI et l'API de lecture/écriture des tickets.                */
-/* Suffisant pour un outil interne à faible effectif ; si le nombre    */
-/* d'agents SI augmente, relier ce contrôle aux comptes Silwane        */
-/* existants plutôt que d'ajouter des mots de passe supplémentaires.   */
-/* ------------------------------------------------------------------ */
+
 const SESSION_COOKIE = "si_session";
 
 function signSession() {
@@ -84,8 +64,7 @@ function requireSiAuth(req, res, next) {
 }
 
 /* ------------------------------------------------------------------ */
-/* Upload des captures d'écran jointes à une déclaration               */
-/* ------------------------------------------------------------------ */
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, UPLOAD_DIR),
   filename: (req, file, cb) => {
@@ -103,8 +82,7 @@ const upload = multer({
   },
 });
 
-/* ------------------------------------------------------------------ */
-/* Pages statiques                                                     */
+
 /* ------------------------------------------------------------------ */
 app.use("/assets", express.static(path.join(__dirname, "public", "assets")));
 
@@ -122,7 +100,7 @@ app.post("/informatique/login", (req, res) => {
     res.cookie(SESSION_COOKIE, signSession(), {
       httpOnly: true,
       sameSite: "lax",
-      maxAge: 12 * 60 * 60 * 1000, // 12h
+      maxAge: 12 * 60 * 60 * 1000, 
     });
     return res.redirect("/informatique");
   }
@@ -138,12 +116,11 @@ app.get("/informatique", requireSiAuth, (req, res) => {
   res.sendFile(path.join(__dirname, "public", "informatique.html"));
 });
 
-// Les captures jointes ne sont accessibles qu'au service informatique.
+
 app.use("/uploads", requireSiAuth, express.static(UPLOAD_DIR));
 
 /* ------------------------------------------------------------------ */
-/* API tickets                                                         */
-/* ------------------------------------------------------------------ */
+
 app.post("/api/tickets", upload.array("captures", 6), async (req, res) => {
   try {
     const captures = (req.files || []).map((f) => ({
@@ -163,9 +140,7 @@ app.get("/api/tickets", requireSiAuth, async (req, res) => {
   res.json(tickets);
 });
 
-// Vérification publique du statut d'un ticket par son numéro — aucune
-// authentification requise, mais seul un sous-ensemble de champs "sûrs"
-// est renvoyé (jamais les notes internes du service informatique).
+
 app.get("/api/tickets/lookup", async (req, res) => {
   const numero = (req.query.numero || "").trim();
   if (!numero) return res.status(400).json({ error: "Numéro de ticket requis." });
@@ -185,7 +160,7 @@ app.patch("/api/tickets/:id", requireSiAuth, async (req, res) => {
 
   const updated = await store.updateTicket(req.params.id, req.body || {});
 
-  // Notifie le demandeur par email au passage au statut "Résolu" (une seule fois).
+
   if (updated.statut === "Résolu" && before.statut !== "Résolu" && !updated.notification_envoyee) {
     const sent = await mailer.sendResolutionEmail(updated);
     if (sent) await store.markNotificationSent(updated.id);

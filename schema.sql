@@ -1,7 +1,4 @@
--- schema.sql
--- Schéma de la base "Suivi support — ERP Silwane".
--- Exécuté automatiquement au démarrage du serveur (lib/db.js -> migrate()) ;
--- fourni ici séparément pour référence / création manuelle sur Neon.
+
 
 CREATE TABLE IF NOT EXISTS tickets (
   id                   TEXT PRIMARY KEY,
